@@ -41,6 +41,15 @@
     </dependencies>
 
     <build>
+            <resources>
+                <resource>
+                    <directory>src/main/resources</directory>
+                    <includes>
+                        <include>**/*.fxml</include>
+                        <include>**/*.txt</include>
+                    </includes>
+                </resource>
+            </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -74,5 +83,7 @@
                 </executions>
             </plugin>
         </plugins>
+
     </build>
+
 </project>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.associations_universitaires_javafx.DashboardController">
+
+    <top>
+        <HBox style="-fx-padding: 10; -fx-background-color: #e0e0e0;">
+            <Label fx:id="welcomeLabel" style="-fx-font-size: 16pt;"/>
+            <Button text="Logout" onAction="#handleLogout" style="-fx-font-size: 12pt;"
+                    HBox.hgrow="ALWAYS" HBox.alignment="CENTER_RIGHT"/>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.3">
+            <!-- Left side - Clubs list -->
+            <VBox style="-fx-padding: 10;">
+                <Label text="Available Clubs" style="-fx-font-size: 14pt; -fx-font-weight: bold;"/>
+                <ListView fx:id="clubsListView"/>
+            </VBox>
+
+            <!-- Right side - Club details -->
+            <VBox fx:id="clubDetailsVBox" spacing="10" style="-fx-padding: 20;">
+                <Label text="Select a club to view details" style="-fx-font-size: 14pt;"/>
+            </VBox>
+        </SplitPane>
+    </center>
+</BorderPane>
