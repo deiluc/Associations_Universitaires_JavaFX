@@ -8,59 +8,71 @@
 <VBox xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.associations_universitaires_javafx.RegisterController"
-      spacing="15"
+      spacing="20"
       alignment="CENTER"
-      style="-fx-padding: 25; -fx-background-color: #f5f5f5;">
+      prefWidth="650"
+      prefHeight="550"
+      style="-fx-padding: 30; -fx-background-color: #f5f5f5;">
 
     <Label text="Student Registration" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
 
-    <GridPane hgap="10" vgap="15">
+    <GridPane hgap="15" vgap="20" style="-fx-padding: 10;">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" minWidth="150"/>
+            <ColumnConstraints halignment="LEFT" minWidth="400"/>
+        </columnConstraints>
+
         <!-- First Name -->
         <Label text="First Name:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="firstNameField" promptText="Enter first name" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <TextField fx:id="firstNameField" promptText="Enter first name" style="-fx-min-width: 350;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
         <!-- Last Name -->
         <Label text="Last Name:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="lastNameField" promptText="Enter last name" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <TextField fx:id="lastNameField" promptText="Enter last name" style="-fx-min-width: 350;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
         <!-- Email -->
         <Label text="Email:" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <TextField fx:id="emailField" promptText="example@university.edu" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        <TextField fx:id="emailField" promptText="example@university.edu" style="-fx-min-width: 350;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
         <!-- Password -->
         <Label text="Password:" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <HBox spacing="5" GridPane.rowIndex="3" GridPane.columnIndex="1">
-            <PasswordField fx:id="passwordField" promptText="Create password" style="-fx-min-width: 250;"/>
-            <Button fx:id="showPasswordBtn" text="👁" tooltip="Show password" style="-fx-background-radius: 5; -fx-min-width: 30;" onAction="#togglePasswordVisibility"/>
+        <HBox spacing="10" GridPane.rowIndex="3" GridPane.columnIndex="1" alignment="CENTER_LEFT">
+            <PasswordField fx:id="passwordField" promptText="Create password" style="-fx-min-width: 300;"/>
+            <TextField fx:id="visiblePasswordField" promptText="Visible password" style="-fx-min-width: 300;" visible="false"/>
+            <Button fx:id="showPasswordBtn" text="👁" style="-fx-background-radius: 5; -fx-min-width: 40; -fx-min-height: 30;" onAction="#togglePasswordVisibility">
+                <tooltip>
+                    <Tooltip text="Show password"/>
+                </tooltip>
+            </Button>
         </HBox>
 
         <!-- Password Requirements -->
         <HBox spacing="5" GridPane.rowIndex="4" GridPane.columnIndex="1">
-            <VBox spacing="3">
-                <Text text="• 8+ characters" fill="#e74c3c" fx:id="lengthReq"/>
-                <Text text="• 1 uppercase" fill="#e74c3c" fx:id="upperReq"/>
-                <Text text="• 1 lowercase" fill="#e74c3c" fx:id="lowerReq"/>
-                <Text text="• 1 special character" fill="#e74c3c" fx:id="specialReq"/>
+            <VBox spacing="5">
+                <Text text="• 8+ characters" fill="#e74c3c" fx:id="lengthReq" style="-fx-font-size: 14px;"/>
+                <Text text="• 1 uppercase" fill="#e74c3c" fx:id="upperReq" style="-fx-font-size: 14px;"/>
+                <Text text="• 1 lowercase" fill="#e74c3c" fx:id="lowerReq" style="-fx-font-size: 14px;"/>
+                <Text text="• 1 special character" fill="#e74c3c" fx:id="specialReq" style="-fx-font-size: 14px;"/>
             </VBox>
         </HBox>
 
         <!-- Confirm Password -->
         <Label text="Confirm Password:" style="-fx-font-weight: bold;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-        <PasswordField fx:id="confirmPasswordField" promptText="Re-enter password" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+        <PasswordField fx:id="confirmPasswordField" promptText="Re-enter password" style="-fx-min-width: 350;" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
         <!-- Password Match Indicator -->
-        <Label fx:id="passwordMatchLabel" text="" GridPane.rowIndex="6" GridPane.columnIndex="1" style="-fx-text-fill: #e74c3c;"/>
+        <Label fx:id="passwordMatchLabel" text="" GridPane.rowIndex="6" GridPane.columnIndex="1" style="-fx-text-fill: #e74c3c; -fx-font-size: 14px;"/>
     </GridPane>
 
     <!-- Register Button -->
-    <Button text="Register" fx:id="registerBtn" style="-fx-font-size: 14px; -fx-padding: 8 20; -fx-background-color: #3498db; -fx-text-fill: white;" onAction="#handleRegister"/>
+    <Button text="Register" fx:id="registerBtn" style="-fx-font-size: 16px; -fx-padding: 10 25; -fx-background-color: #3498db; -fx-text-fill: white;" onAction="#handleRegister"/>
 
     <!-- Status Message -->
-    <Label fx:id="statusLabel" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+    <Label fx:id="statusLabel" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-font-size: 14px;"/>
 
     <!-- Back to Login -->
-    <HBox spacing="5" alignment="CENTER">
-        <Label text="Already have an account?"/>
-        <Button text="Sign In" style="-fx-background-color: transparent; -fx-text-fill: #3498db; -fx-underline: true;" onAction="#handleBackToLogin"/>
+    <HBox spacing="10" alignment="CENTER">
+        <Label text="Already have an account?" style="-fx-font-size: 14px;"/>
+        <Button text="Sign In" style="-fx-background-color: transparent; -fx-text-fill: #3498db; -fx-underline: true; -fx-font-size: 14px;" onAction="#handleBackToLogin"/>
     </HBox>
 </VBox>

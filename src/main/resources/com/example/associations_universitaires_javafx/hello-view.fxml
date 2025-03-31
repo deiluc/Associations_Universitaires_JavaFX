@@ -6,29 +6,44 @@
 <VBox xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.associations_universitaires_javafx.HelloController"
-      spacing="10"
+      spacing="20"
       alignment="CENTER"
-      style="-fx-padding: 20; -fx-background-color: #f5f5f5;">
+      prefWidth="700"
+      prefHeight="650"
+      style="-fx-padding: 40; -fx-background-color: #f5f5f5;">
 
-    <Label text="University Clubs Login" style="-fx-font-size: 18pt; -fx-font-weight: bold;"/>
+    <Label text="University Clubs Login" style="-fx-font-size: 24pt; -fx-font-weight: bold;"/>
 
-    <GridPane hgap="10" vgap="10">
-        <Label text="Email:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="emailField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+    <GridPane hgap="15" vgap="15" style="-fx-padding: 20;">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" minWidth="150"/>
+            <ColumnConstraints halignment="LEFT" minWidth="350"/>
+        </columnConstraints>
 
-        <Label text="Password:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <PasswordField fx:id="passwordField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-        <TextField fx:id="visiblePasswordField" GridPane.rowIndex="1" GridPane.columnIndex="1" visible="false"/>
+        <!-- Email -->
+        <Label text="Email:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-size: 14pt;"/>
+        <TextField fx:id="emailField" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-min-width: 300; -fx-font-size: 14pt;"/>
 
+        <!-- Password -->
+        <Label text="Password:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-size: 14pt;"/>
+        <StackPane GridPane.rowIndex="1" GridPane.columnIndex="1">
+            <PasswordField fx:id="passwordField" style="-fx-min-width: 300; -fx-font-size: 14pt;"/>
+            <TextField fx:id="visiblePasswordField" style="-fx-min-width: 300; -fx-font-size: 14pt;" visible="false"/>
+        </StackPane>
+
+        <!-- Show Password Checkbox -->
+        <Label GridPane.rowIndex="2" GridPane.columnIndex="0"/> <!-- Empty label for spacing -->
         <CheckBox fx:id="showPasswordCheckBox" text="Show Password"
                   GridPane.rowIndex="2" GridPane.columnIndex="1"
+                  style="-fx-font-size: 12pt;"
                   onAction="#handleShowPassword"/>
+
     </GridPane>
 
-    <HBox spacing="10" alignment="CENTER">
-        <Button text="Login" onAction="#handleLogin"/>
-        <Button text="Register" onAction="#handleRegister"/>
+    <HBox spacing="20" alignment="CENTER">
+        <Button text="Login" onAction="#handleLogin" style="-fx-font-size: 14pt; -fx-padding: 10 25;"/>
+        <Button text="Register" onAction="#handleRegister" style="-fx-font-size: 14pt; -fx-padding: 10 25;"/>
     </HBox>
 
-    <Label fx:id="statusLabel" style="-fx-text-fill: red;"/>
+    <Label fx:id="statusLabel" style="-fx-text-fill: red; -fx-font-size: 14pt;"/>
 </VBox>
