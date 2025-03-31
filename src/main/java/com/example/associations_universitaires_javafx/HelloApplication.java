@@ -33,7 +33,8 @@ public class HelloApplication extends Application {
         stage.show();
     }
 
-    private void initializeTextDatabase() {
+
+    private void initializeTextDatabase() throws IOException {
         // Users database
         File usersFile = new File("users.txt");
         if (!usersFile.exists()) {
@@ -51,6 +52,11 @@ public class HelloApplication extends Application {
             }
         }
 
+        // Add this to HelloApplication.java in initializeTextDatabase()
+        File announcementsFile = new File("announcements.txt");
+        if (!announcementsFile.exists()) {
+            announcementsFile.createNewFile();
+        }
 
         // Associations database
         File associationsFile = new File("associations.txt");

@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Pos?>
+<?import javafx.geometry.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -18,21 +18,19 @@
                         style="-fx-font-size: 14pt; -fx-padding: 8 20; -fx-background-color: #e74c3c; -fx-text-fill: white;"/>
             </HBox>
 
-            <!-- Dropdown Menus -->
+            <!-- Admin Announcement Button -->
+            <HBox alignment="CENTER_RIGHT" style="-fx-padding: 0 15 10 15;">
+                <Button fx:id="addAnnouncementBtn" text="Adauga anunt"
+                        onAction="#handleAddAnnouncement"
+                        style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+            </HBox>
+
+            <!-- Navigation Menus -->
             <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 0 15;">
                 <MenuButton text="Asociati" style="-fx-font-size: 14pt;">
                     <items>
-                        <MenuItem text="Lista Asociatii" />
-                        <MenuItem fx:id="addAsociatieItem" text="Adauga Asociatie" />
-                        <MenuItem text="Statistici" />
-                    </items>
-                </MenuButton>
-
-                <MenuButton text="Info" style="-fx-font-size: 14pt;">
-                    <items>
-                        <MenuItem text="Despre Noi" />
-                        <MenuItem text="Contact" />
-                        <MenuItem text="Regulament" />
+                        <MenuItem text="Lista Asociatii" onAction="#handleListAssociations"/>
+                        <MenuItem fx:id="addAsociatieItem" text="Adauga Asociatie" onAction="#handleAddAsociatie"/>
                     </items>
                 </MenuButton>
             </HBox>
@@ -40,7 +38,9 @@
     </top>
 
     <center>
-        <TextArea fx:id="newsTextArea" style="-fx-font-size: 14pt; -fx-padding: 15;" editable="false" wrapText="true"/>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+            <VBox fx:id="announcementsContainer" spacing="20" style="-fx-padding: 20;"/>
+        </ScrollPane>
     </center>
 
     <bottom>
