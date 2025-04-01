@@ -369,4 +369,25 @@ public class HomeController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    @FXML
+    private void handleViewProfile() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/example/associations_universitaires_javafx/profile-view.fxml"
+            ));
+            Parent root = loader.load();
+
+            // Pass current user data to profile controller
+            ProfileController controller = loader.getController();
+            controller.initializeUserData(currentUserEmail, currentUserName, currentUserRole);
+
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(new Scene(root, 700, 650));
+            stage.setTitle("My Profile");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not load profile page!");
+        }
+    }
 }

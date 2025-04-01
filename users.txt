@@ -1,2 +1,2 @@
 Admin:User:admin@university.com:$2a$10$CW5sohZMAVxBZzTdOnOav.M2GOjpkE5FCL3YxzPsN7eJbrlQoGzd6:admin
-A:L:a@gmail.com:$2a$10$e4PE/CCoZxxQZUP05LgaIOrtIPOb0wuuic7hVjZ44OZBtDWQ6vsnu:user
+A:L:a@gmail.com:$2a$10$e4PE/CCoZxxQZUP05LgaIOrtIPOb0wuuic7hVjZ44OZBtDWQ6vsnu:admin

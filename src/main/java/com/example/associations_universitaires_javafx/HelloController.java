@@ -103,7 +103,7 @@ public class HelloController {
         Parent root = loader.load();
 
         HomeController controller = loader.getController();
-        controller.initializeUserData(email, fullName, role);  // Updated method name
+        controller.initializeUserData(email, fullName, role);
 
         Stage stage = (Stage) emailField.getScene().getWindow();
         stage.setScene(new Scene(root, 700, 650));
