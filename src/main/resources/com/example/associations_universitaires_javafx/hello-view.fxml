@@ -12,7 +12,7 @@
       prefHeight="650"
       style="-fx-padding: 40; -fx-background-color: #f5f5f5;">
 
-    <Label text="University Clubs Login" style="-fx-font-size: 24pt; -fx-font-weight: bold;"/>
+    <Label text="UNSTPB Login" style="-fx-font-size: 24pt; -fx-font-weight: bold;"/>
 
     <GridPane hgap="15" vgap="15" style="-fx-padding: 20;">
         <columnConstraints>

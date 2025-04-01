@@ -21,6 +21,9 @@ public class AddAssociationController {
     @FXML private VBox departmentsContainer;
     @FXML private TextField emailField;
     @FXML private TextField phoneField;
+    private String currentUserEmail;
+    private String currentUserName;
+    private String currentUserRole;
 
     private int departmentCount = 3;
 
@@ -114,11 +117,25 @@ public class AddAssociationController {
                     "/com/example/associations_universitaires_javafx/home-view.fxml"
             ));
             Parent root = loader.load();
+
+            // Get the controller and FULLY reinitialize
+            HomeController controller = loader.getController();
+            controller.initializeUserData(currentUserEmail, currentUserName, currentUserRole);
+
+            // Get the current stage
             Stage stage = (Stage) nameField.getScene().getWindow();
-            stage.setScene(new Scene(root, 700, 650));
-            stage.setTitle("University Clubs Dashboard");
+
+            // Create new scene to ensure complete refresh
+            Scene scene = new Scene(root, 700, 650);
+            stage.setScene(scene);
+            stage.setTitle("UNSTPB Dashboard");
+
+            // Force focus refresh
+            stage.hide();
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            showAlert("Error", "Failed to return to home: " + e.getMessage());
         }
     }
 }

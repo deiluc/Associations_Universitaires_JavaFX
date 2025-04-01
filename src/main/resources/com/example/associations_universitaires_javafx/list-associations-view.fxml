@@ -2,6 +2,8 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <VBox xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
@@ -12,23 +14,22 @@
 
     <Label text="Associations List" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
 
-    <TableView fx:id="associationsTable">
+    <TableView fx:id="associationsTable" style="-fx-font-size: 14px;">
         <columns>
-            <TableColumn text="Name" prefWidth="150">
+            <TableColumn text="Name" prefWidth="200">
                 <cellValueFactory><PropertyValueFactory property="name"/></cellValueFactory>
             </TableColumn>
             <TableColumn text="Abbreviation" prefWidth="100">
                 <cellValueFactory><PropertyValueFactory property="abbreviation"/></cellValueFactory>
             </TableColumn>
-            <TableColumn text="Description" prefWidth="300">
-                <cellValueFactory><PropertyValueFactory property="description"/></cellValueFactory>
-            </TableColumn>
-            <TableColumn fx:id="actionColumn" text="Actions" prefWidth="100">
-                <cellValueFactory><PropertyValueFactory property="dummy"/></cellValueFactory>
+            <TableColumn text="Leader" prefWidth="150">
+                <cellValueFactory><PropertyValueFactory property="leaderName"/></cellValueFactory>
             </TableColumn>
         </columns>
     </TableView>
 
-    <Button text="Back" onAction="#handleBack"
-            style="-fx-font-size: 14px; -fx-padding: 8 20; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+    <HBox spacing="20" alignment="CENTER">
+        <Button text="Back" onAction="#handleBack"
+                style="-fx-font-size: 14px; -fx-padding: 8 20; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+    </HBox>
 </VBox>

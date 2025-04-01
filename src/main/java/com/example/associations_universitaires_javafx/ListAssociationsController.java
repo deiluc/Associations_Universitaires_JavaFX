@@ -8,171 +8,93 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListAssociationsController {
     @FXML private TableView<Association> associationsTable;
-    @FXML private TableColumn<Association, String> actionColumn;
     private String currentUserRole;
+    private String currentUserEmail;
 
     public static class Association {
         private final String name;
         private final String abbreviation;
-        private final String description;
-        private final String dummy; // For the action column
+        private final String leaderEmail;
+        private final String leaderName;
 
-        public Association(String name, String abbreviation, String description) {
+        public Association(String name, String abbreviation, String leaderEmail, String leaderName) {
             this.name = name;
             this.abbreviation = abbreviation;
-            this.description = description;
-            this.dummy = ""; // Dummy value for the action column
+            this.leaderEmail = leaderEmail;
+            this.leaderName = leaderName;
         }
 
-        // Getters
+
+
         public String getName() { return name; }
         public String getAbbreviation() { return abbreviation; }
-        public String getDescription() { return description; }
-        public String getDummy() { return dummy; }
+        public String getLeaderEmail() { return leaderEmail; }
+        public String getLeaderName() { return leaderEmail.isEmpty() ? "No leader" : leaderName;}
     }
 
-    public void initializeUserData(String role) {
+    public void initializeUserData(String email, String role) {
+        this.currentUserEmail = email;
         this.currentUserRole = role;
-        configureActionColumn();
         loadAssociations();
+        setupTable();
     }
 
-    private void configureActionColumn() {
-        if (!"admin".equals(currentUserRole)) {
-            actionColumn.setVisible(false);
-            return;
-        }
-
-        actionColumn.setCellFactory(new Callback<>() {
-            @Override
-            public TableCell<Association, String> call(TableColumn<Association, String> param) {
-                return new TableCell<>() {
-                    private final Button deleteBtn = new Button("Delete");
-
-                    {
-                        deleteBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
-                        deleteBtn.setOnAction(event -> {
-                            Association association = getTableView().getItems().get(getIndex());
-                            showDeleteConfirmation(association);
-                        });
-                    }
-
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            setGraphic(deleteBtn);
-                        }
-                    }
-                };
-            }
-        });
-    }
-    private void showDeleteConfirmation(Association association) {
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Delete Association");
-        dialog.setHeaderText("Are you sure you want to delete '" + association.getName() + "'?");
-
-        // Set the button types
-        ButtonType yesButtonType = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-        ButtonType noButtonType = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().addAll(yesButtonType, noButtonType);
-
-        // Create reason text field
-        TextArea reasonField = new TextArea();
-        reasonField.setPromptText("Enter reason for deletion");
-        reasonField.setWrapText(true);
-        reasonField.setPrefRowCount(3);
-
-        VBox content = new VBox(10, new Label("Reason for deletion:"), reasonField);
-        content.setStyle("-fx-padding: 10;");
-        dialog.getDialogPane().setContent(content);
-
-        // Enable/disable Yes button based on reason input
-        Button yesButton = (Button) dialog.getDialogPane().lookupButton(yesButtonType);
-        yesButton.setDisable(true);
-        reasonField.textProperty().addListener((obs, oldVal, newVal) -> {
-            yesButton.setDisable(newVal.trim().isEmpty());
-        });
-
-        // Show dialog and handle response
-        dialog.showAndWait().ifPresent(response -> {
-            if (response == yesButtonType) {
-                deleteAssociation(association, reasonField.getText());
-            }
+    private void setupTable() {
+        associationsTable.setRowFactory(tv -> {
+            TableRow<Association> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Association association = row.getItem();
+                    openAssociationDetails(association);
+                }
+            });
+            return row;
         });
     }
 
-    private void deleteAssociation(Association association, String reason) {
+    private void openAssociationDetails(Association association) {
         try {
-            // 1. Remove from associations.txt
-            List<String> lines = new ArrayList<>();
-            try (BufferedReader reader = new BufferedReader(new FileReader("associations.txt"))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] parts = line.split(":");
-                    if (!parts[0].equals(association.getName())) {
-                        lines.add(line);
-                    }
-                }
-            }
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/example/associations_universitaires_javafx/association-view.fxml"
+            ));
+            Parent root = loader.load();
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("associations.txt"))) {
-                for (String line : lines) {
-                    writer.write(line);
-                    writer.newLine();
-                }
-            }
+            AssociationController controller = loader.getController();
+            controller.initializeData(
+                    association.getName(),
+                    association.getLeaderEmail(),
+                    currentUserEmail,  // Make sure this is passed
+                    currentUserRole    // Make sure this is passed
+            );
 
-            // 2. Log the deletion
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("deletions.log", true))) {
-                writer.write(String.format("%s:%s:%s%n",
-                        association.getName(),
-                        LocalDateTime.now(),
-                        reason));
-            }
-
-            // 3. Reload the table
-            loadAssociations();
-
-            // Show success message
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Success");
-            alert.setHeaderText(null);
-            alert.setContentText("Association deleted successfully!");
-            alert.showAndWait();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root, 800, 600));
+            stage.setTitle(association.getName());
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Failed to delete association!");
-            alert.showAndWait();
+            showAlert("Error", "Failed to open association details: " + e.getMessage());
         }
     }
 
-    private void loadAssociations() {
+    public void loadAssociations() {
         ObservableList<Association> associations = FXCollections.observableArrayList();
 
         try (BufferedReader reader = new BufferedReader(new FileReader("associations.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(":");
-                if (parts.length >= 3) {
-                    associations.add(new Association(parts[0], parts[2], parts[1]));
+                if (parts.length >= 4) {
+                    String leaderName = parts[3].isEmpty() ? "No leader" : getUserName(parts[3]);
+                    associations.add(new Association(parts[0], parts[1], parts[3], leaderName));
                 }
             }
         } catch (IOException e) {
@@ -180,6 +102,19 @@ public class ListAssociationsController {
         }
 
         associationsTable.setItems(associations);
+    }
+
+    private String getUserName(String email) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader("users.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts.length >= 3 && parts[2].equals(email)) {
+                    return parts[0] + " " + parts[1]; // First + Last name
+                }
+            }
+        }
+        return "Unknown";
     }
 
     @FXML
@@ -190,12 +125,26 @@ public class ListAssociationsController {
             ));
             Parent root = loader.load();
             HomeController controller = loader.getController();
-            controller.initializeUserData("", "", currentUserRole);
+
+            // Get the user's full name from users.txt
+            String fullName = getUserName(currentUserEmail);
+            controller.initializeUserData(currentUserEmail, fullName, currentUserRole);
+
             Stage stage = (Stage) associationsTable.getScene().getWindow();
             stage.setScene(new Scene(root, 700, 650));
-            stage.setTitle("University Clubs Dashboard");
+            stage.setTitle("UNSTPB Dashboard");
         } catch (IOException e) {
             e.printStackTrace();
+            showAlert("Error", "Failed to return to home: " + e.getMessage());
         }
+    }
+
+    // Add this helper method if you don't have it
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

@@ -18,14 +18,30 @@
             <ColumnConstraints halignment="LEFT" minWidth="300"/>
         </columnConstraints>
 
-        <Label text="Name:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <Label text="First Name:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="firstNameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <Label text="Email:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="emailField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <Label text="Last Name:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="lastNameField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-        <Label text="Phone:" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <TextField fx:id="phoneField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+        <Label text="Email:" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="emailField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Phone:" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="phoneField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <!-- Password Change Section -->
+        <Label text="Change Password" style="-fx-font-weight: bold; -fx-padding: 10 0 0 0;"
+               GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+
+        <Label text="Current Password:" style="-fx-font-weight: bold;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <PasswordField fx:id="currentPasswordField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+        <Label text="New Password:" style="-fx-font-weight: bold;" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <PasswordField fx:id="newPasswordField" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+        <Label text="Confirm Password:" style="-fx-font-weight: bold;" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+        <PasswordField fx:id="confirmPasswordField" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
     </GridPane>
 
     <HBox spacing="20" alignment="CENTER">

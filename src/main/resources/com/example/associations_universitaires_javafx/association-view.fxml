@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.associations_universitaires_javafx.AssociationController"
+      spacing="15"
+      style="-fx-padding: 20;">
+
+    <Label fx:id="associationNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Leader:" style="-fx-font-weight: bold;"/>
+        <Label fx:id="leaderLabel"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="manageMembersBtn" text="Manage Members" visible="false" onAction="#handleManageMembers"/>
+        <Button fx:id="addNewsBtn" text="Add News" visible="false" onAction="#handleAddNews"/>
+        <Button fx:id="deleteAssociationBtn" text="Delete Association" visible="false"
+                style="-fx-background-color: #e74c3c; -fx-text-fill: white;"
+                onAction="#handleDeleteAssociation"/>
+    </HBox>
+
+    <Label text="Latest News:" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+    <ListView fx:id="newsListView" style="-fx-font-size: 14px;"/>
+</VBox>

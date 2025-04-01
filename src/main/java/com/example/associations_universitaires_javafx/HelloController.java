@@ -107,7 +107,7 @@ public class HelloController {
 
         Stage stage = (Stage) emailField.getScene().getWindow();
         stage.setScene(new Scene(root, 700, 650));
-        stage.setTitle("University Clubs Dashboard");
+        stage.setTitle("UNSTPB Dashboard");
     }
 
     private static class User {

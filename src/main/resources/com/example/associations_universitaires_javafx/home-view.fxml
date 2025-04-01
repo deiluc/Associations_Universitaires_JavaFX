@@ -42,13 +42,15 @@
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
-            <VBox fx:id="announcementsContainer" spacing="20" style="-fx-padding: 20;"/>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                    style="-fx-background: #f5f5f5; -fx-border-color: #f5f5f5;">
+            <VBox fx:id="announcementsContainer" spacing="20"
+                  style="-fx-padding: 20; -fx-background-color: #f5f5f5;"/>
         </ScrollPane>
     </center>
 
     <bottom>
-        <Label text="University Clubs System"
+        <Label text="UNSTPB System"
                style="-fx-font-size: 14pt; -fx-padding: 15;"/>
     </bottom>
 </BorderPane>

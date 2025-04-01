@@ -189,7 +189,7 @@ public class RegisterController {
             stage.setScene(new Scene(root, 700, 650));
             stage.setMinWidth(700);
             stage.setMinHeight(650);
-            stage.setTitle("University Clubs Login");
+            stage.setTitle("UNSTPB Login");
         } catch (IOException e) {
             if (statusLabel != null) {
                 statusLabel.setText("Error loading login page");

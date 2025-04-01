@@ -42,7 +42,6 @@ public class HomeController {
         addAnnouncementBtn.setVisible("admin".equals(role));
         addAnnouncementBtn.setManaged("admin".equals(role));
     }
-
     private void configureMenuForUserRole() {
         if (addAsociatieItem != null) {
             addAsociatieItem.setVisible("admin".equals(currentUserRole));
@@ -84,7 +83,10 @@ public class HomeController {
         VBox card = new VBox(10);
         card.setStyle("-fx-background-color: white; -fx-padding: 15; -fx-border-radius: 5; -fx-border-color: #ddd; -fx-border-width: 1;");
         card.setPadding(new Insets(15));
+        card.setMaxWidth(Double.MAX_VALUE); // Important for proper sizing
 
+        // Prevent the card from growing beyond the scroll pane's width
+        card.setMaxWidth(Region.USE_COMPUTED_SIZE);
         HBox headerBox = new HBox();
         headerBox.setAlignment(Pos.CENTER_LEFT);
 
@@ -341,7 +343,7 @@ public class HomeController {
             Parent root = loader.load();
             Stage stage = (Stage) welcomeLabel.getScene().getWindow();
             stage.setScene(new Scene(root, 700, 650));
-            stage.setTitle("University Clubs Login");
+            stage.setTitle("UNSTPB Login");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -353,13 +355,16 @@ public class HomeController {
                     "/com/example/associations_universitaires_javafx/list-associations-view.fxml"
             ));
             Parent root = loader.load();
+
             ListAssociationsController controller = loader.getController();
-            controller.initializeUserData(currentUserRole);
+            controller.initializeUserData(currentUserEmail, currentUserRole);  // Pass both email and role
+
             Stage stage = (Stage) welcomeLabel.getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
             stage.setTitle("Associations List");
         } catch (IOException e) {
             e.printStackTrace();
+            showAlert("Error", "Could not load associations list: " + e.getMessage());
         }
     }
     private void showAlert(String title, String message) {

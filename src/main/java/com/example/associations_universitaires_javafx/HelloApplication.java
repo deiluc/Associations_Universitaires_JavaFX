@@ -26,7 +26,7 @@ public class HelloApplication extends Application {
         // Temporarily comment out this line to disable CSS
         // scene.getStylesheets().add(getClass().getResource("/com/example/associations_universitaires_javafx/styles.css").toExternalForm());
         // 4. Stage setup (keeping your title and size constraints)
-        stage.setTitle("University Clubs Management");
+        stage.setTitle("UNSTPB Management");
         stage.setScene(scene);
         stage.setMinWidth(700);
         stage.setMinHeight(650);
