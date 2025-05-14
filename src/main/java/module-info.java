@@ -9,3 +9,5 @@ module com.example.associations_universitaires_javafx {
     opens com.example.associations_universitaires_javafx to javafx.fxml;
     exports com.example.associations_universitaires_javafx;
 }
+
+//when i made this only _*GOD AND ME*_ understood, and now only GODS know

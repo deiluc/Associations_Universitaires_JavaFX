@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.associations_universitaires_javafx.EventController" spacing="10" style="-fx-padding: 20;">
+
+    <!-- Association Selection (always visible for manual selection) -->
+    <HBox spacing="5">
+        <Label text="Association:" style="-fx-font-weight: bold;" />
+        <ComboBox fx:id="associationComboBox" />
+    </HBox>
+
+    <!-- Event Details -->
+    <HBox spacing="5">
+        <Label text="Title:" style="-fx-font-weight: bold;" />
+        <TextField fx:id="titleField" />
+    </HBox>
+    <HBox spacing="5">
+        <Label text="Start Date:" style="-fx-font-weight: bold;" />
+        <DatePicker fx:id="startDatePicker" />
+    </HBox>
+    <HBox spacing="5">
+        <Label text="End Date:" style="-fx-font-weight: bold;" />
+        <DatePicker fx:id="endDatePicker" />
+    </HBox>
+    <HBox spacing="5">
+        <Label text="Start Time:" style="-fx-font-weight: bold;" />
+        <TextField fx:id="startTimeField" promptText="HH:mm" />
+    </HBox>
+    <HBox spacing="5">
+        <Label text="End Time:" style="-fx-font-weight: bold;" />
+        <TextField fx:id="endTimeField" promptText="HH:mm" />
+    </HBox>
+    <HBox spacing="5">
+        <Label text="Location:" style="-fx-font-weight: bold;" />
+        <TextField fx:id="locationField" />
+    </HBox>
+    <HBox spacing="5">
+        <Label text="Description:" style="-fx-font-weight: bold;" />
+        <TextArea fx:id="descriptionField" prefHeight="100" />
+    </HBox>
+
+    <!-- Create Button -->
+    <HBox spacing="5" alignment="CENTER_RIGHT">
+        <Button fx:id="createEventBtn" text="Create Event" onAction="#handleCreateEvent" />
+    </HBox>
+
+    <!-- Events Table -->
+    <TableView fx:id="eventsTable">
+        <columns>
+            <TableColumn fx:id="titleColumn" text="Title" />
+            <TableColumn fx:id="dateRangeColumn" text="Date Range" />
+            <TableColumn fx:id="timeRangeColumn" text="Time Range" />
+            <TableColumn fx:id="locationColumn" text="Location" />
+            <TableColumn fx:id="statusColumn" text="Status" />
+            <TableColumn fx:id="actionColumn" text="Actions" />
+        </columns>
+    </TableView>
+</VBox>

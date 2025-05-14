@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.associations_universitaires_javafx.NotificationsController"
+      spacing="10" style="-fx-padding: 20;">
+    <Label text="Notifications" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <ListView fx:id="notificationsList" VBox.vgrow="ALWAYS"/>
+    <Button text="Mark All as Read" onAction="#handleMarkAllRead" style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+</VBox>

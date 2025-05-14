@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.associations_universitaires_javafx.ApprovedEventsController"
+      spacing="15"
+      style="-fx-padding: 20;">
+
+    <!-- Title -->
+    <Label text="Approved Events" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <!-- Events Table -->
+    <TableView fx:id="eventsTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="statusColumn" text="Status" prefWidth="100" />
+            <TableColumn fx:id="associationColumn" text="Association" prefWidth="150"/>
+            <TableColumn fx:id="titleColumn" text="Title" prefWidth="200"/>
+            <TableColumn fx:id="dateRangeColumn" text="Date Range" prefWidth="200"/>
+            <TableColumn fx:id="timeRangeColumn" text="Time Range" prefWidth="150"/>
+            <TableColumn fx:id="locationColumn" text="Location" prefWidth="150"/>
+            <TableColumn fx:id="detailsColumn" text="Details" prefWidth="100"/>
+        </columns>
+    </TableView>
+</VBox>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.associations_universitaires_javafx.ViewApplicantsController"
+      spacing="10" style="-fx-padding: 20;">
+    <Label fx:id="titleLabel" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <TableView fx:id="applicantsTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn text="Name" prefWidth="150"/>
+            <TableColumn text="Email" prefWidth="200"/>
+            <TableColumn text="Phone" prefWidth="100"/>
+            <TableColumn text="Status" prefWidth="100"/>
+            <TableColumn text="Action" prefWidth="200"/>
+        </columns>
+    </TableView>
+    <Button text="Close" onAction="#handleClose" style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+</VBox>

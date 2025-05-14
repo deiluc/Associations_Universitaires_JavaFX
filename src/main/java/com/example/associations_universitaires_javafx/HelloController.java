@@ -8,9 +8,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.sql.*;
 
 public class HelloController {
     @FXML private TextField emailField;
@@ -35,6 +33,7 @@ public class HelloController {
     @FXML
     public void initialize() {
         visiblePasswordField.textProperty().bindBidirectional(passwordField.textProperty());
+        visiblePasswordField.setVisible(false);
     }
 
     @FXML
@@ -45,58 +44,42 @@ public class HelloController {
         User user = authenticateUser(email, password);
         if (user != null) {
             try {
-                loadHomePage(user.getEmail(), user.getFirstName() + " " + user.getLastName(), user.getRole());
-            } catch (IOException e) {
+                loadHomePage(user.getEmail(), user.getFullName(), user.getRole());
+            } catch (Exception e) {
                 statusLabel.setText("Error loading home page");
-                e.printStackTrace();
             }
         } else {
             statusLabel.setText("Invalid email or password");
         }
     }
 
-    @FXML
-    private void handleRegister() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/com/example/associations_universitaires_javafx/register-view.fxml"
-            ));
-            Parent root = loader.load();
-            Stage stage = (Stage) emailField.getScene().getWindow();
-
-            // Set larger window dimensions
-            stage.setScene(new Scene(root, 700, 650));  // Width: 700, Height: 650
-            stage.setTitle("Student Registration");
-
-            // Optional: Prevent window from being resized smaller than preferred size
-            stage.setMinWidth(700);
-            stage.setMinHeight(650);
-        } catch (IOException e) {
-            statusLabel.setText("Could not open registration form!");
-            e.printStackTrace();
-        }
-    }
-
     private User authenticateUser(String email, String password) {
-        try (BufferedReader reader = new BufferedReader(new FileReader("users.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(":");
-                if (parts.length >= 4 && parts[2].equalsIgnoreCase(email)) {
-                    String storedHash = parts[3];
-                    if (BCrypt.checkpw(password, storedHash)) {
-                        String role = parts.length > 4 ? parts[4] : "user"; // Default to "user" if role not specified
-                        return new User(parts[0], parts[1], parts[2], role);
-                    }
+        String sql = "SELECT user_id, first_name, last_name, email, password_hash, role, phone FROM users WHERE email = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String storedHash = rs.getString("password_hash");
+                if (BCrypt.checkpw(password, storedHash)) {
+                    return new User(
+                            rs.getInt("user_id"),
+                            rs.getString("first_name"),
+                            rs.getString("last_name"),
+                            rs.getString("email"),
+                            storedHash,
+                            rs.getString("role"),
+                            rs.getString("phone")
+                    );
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            statusLabel.setText("Database error: " + e.getMessage());
         }
         return null;
     }
 
-    private void loadHomePage(String email, String fullName, String role) throws IOException {
+    private void loadHomePage(String email, String fullName, String role) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(
                 "/com/example/associations_universitaires_javafx/home-view.fxml"
         ));
@@ -110,22 +93,20 @@ public class HelloController {
         stage.setTitle("UNSTPB Dashboard");
     }
 
-    private static class User {
-        private final String firstName;
-        private final String lastName;
-        private final String email;
-        private final String role;
-
-        public User(String firstName, String lastName, String email, String role) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.email = email;
-            this.role = role;
+    @FXML
+    private void handleRegister() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/example/associations_universitaires_javafx/register-view.fxml"
+            ));
+            Parent root = loader.load();
+            Stage stage = (Stage) emailField.getScene().getWindow();
+            stage.setScene(new Scene(root, 700, 650));
+            stage.setTitle("Student Registration");
+            stage.setMinWidth(700);
+            stage.setMinHeight(650);
+        } catch (Exception e) {
+            statusLabel.setText("Could not open registration form!");
         }
-
-        public String getFirstName() { return firstName; }
-        public String getLastName() { return lastName; }
-        public String getEmail() { return email; }
-        public String getRole() { return role; }
     }
 }

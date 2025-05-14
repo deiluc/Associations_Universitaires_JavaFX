@@ -3,9 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<?import javafx.scene.paint.*?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1"
+<VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.associations_universitaires_javafx.RegisterController"
       spacing="20"

@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1"
+<VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.associations_universitaires_javafx.HelloController"
       spacing="20"
@@ -37,7 +37,6 @@
                   GridPane.rowIndex="2" GridPane.columnIndex="1"
                   style="-fx-font-size: 12pt;"
                   onAction="#handleShowPassword"/>
-
     </GridPane>
 
     <HBox spacing="20" alignment="CENTER">

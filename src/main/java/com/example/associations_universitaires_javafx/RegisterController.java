@@ -12,7 +12,7 @@ import javafx.util.Duration;
 import javafx.animation.PauseTransition;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.io.*;
+import java.sql.*;
 
 public class RegisterController {
     @FXML private TextField firstNameField;
@@ -32,7 +32,6 @@ public class RegisterController {
 
     @FXML
     public void initialize() {
-        // Initialize only if fields are properly injected
         if (visiblePasswordField != null && passwordField != null) {
             visiblePasswordField.setVisible(false);
             visiblePasswordField.textProperty().bindBidirectional(passwordField.textProperty());
@@ -45,8 +44,6 @@ public class RegisterController {
             confirmPasswordField.textProperty().addListener((obs, oldVal, newVal) -> {
                 checkPasswordMatch();
             });
-        } else {
-            System.err.println("FXML injection failed - visiblePasswordField or passwordField is null");
         }
     }
 
@@ -64,8 +61,8 @@ public class RegisterController {
         if (password == null) return;
 
         boolean lengthValid = password.length() >= 8;
-        boolean upperValid = !password.equals(password.toLowerCase());
-        boolean lowerValid = !password.equals(password.toUpperCase());
+        boolean upperValid = password.matches(".*[A-Z].*");
+        boolean lowerValid = password.matches(".*[a-z].*");
         boolean specialValid = password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*");
 
         if (lengthReq != null) lengthReq.setFill(lengthValid ? Color.GREEN : Color.RED);
@@ -95,7 +92,7 @@ public class RegisterController {
     private void handleRegister() {
         if (firstNameField == null || lastNameField == null || emailField == null ||
                 passwordField == null || confirmPasswordField == null || statusLabel == null) {
-            System.err.println("One or more required fields are null");
+            statusLabel.setText("Form initialization error!");
             return;
         }
 
@@ -105,9 +102,13 @@ public class RegisterController {
         String password = passwordField.getText();
         String confirmPassword = confirmPasswordField.getText();
 
-        // Validate fields
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
             statusLabel.setText("All fields are required!");
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            statusLabel.setText("Please enter a valid email address!");
             return;
         }
 
@@ -131,42 +132,37 @@ public class RegisterController {
             saveUserToDatabase(firstName, lastName, email, hashedPassword);
             statusLabel.setText("Registration successful! Redirecting...");
 
-            // Redirect to login after short delay
             PauseTransition delay = new PauseTransition(Duration.seconds(1.5));
             delay.setOnFinished(event -> handleBackToLogin());
             delay.play();
-        } catch (IOException e) {
-            if (statusLabel != null) {
-                statusLabel.setText("Registration error!");
-            }
-            e.printStackTrace();
+        } catch (SQLException e) {
+            statusLabel.setText("Registration error: " + e.getMessage());
         }
     }
 
-    private boolean isEmailRegistered(String email) throws IOException {
-        File file = new File("users.txt");
-        if (!file.exists()) {
-            return false;
+    private boolean isEmailRegistered(String email) throws SQLException {
+        String sql = "SELECT 1 FROM users WHERE email = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
         }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(":");
-                if (parts.length >= 4 && parts[2].equalsIgnoreCase(email)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
-    private void saveUserToDatabase(String firstName, String lastName,
-                                    String email, String hashedPassword) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("users.txt", true))) {
-            writer.write(String.format("%s:%s:%s:%s:user",
-                    firstName, lastName, email, hashedPassword));
-            writer.newLine();
+    private boolean isValidEmail(String email) {
+        return email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+    }
+
+    private void saveUserToDatabase(String firstName, String lastName, String email, String hashedPassword) throws SQLException {
+        String sql = "INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, 'user')";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, firstName);
+            stmt.setString(2, lastName);
+            stmt.setString(3, email);
+            stmt.setString(4, hashedPassword);
+            stmt.executeUpdate();
         }
     }
 
@@ -190,11 +186,8 @@ public class RegisterController {
             stage.setMinWidth(700);
             stage.setMinHeight(650);
             stage.setTitle("UNSTPB Login");
-        } catch (IOException e) {
-            if (statusLabel != null) {
-                statusLabel.setText("Error loading login page");
-            }
-            e.printStackTrace();
+        } catch (Exception e) {
+            statusLabel.setText("Error loading login page");
         }
     }
 }

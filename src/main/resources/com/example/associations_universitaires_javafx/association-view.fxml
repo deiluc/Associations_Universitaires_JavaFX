@@ -1,27 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1"
+<VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.associations_universitaires_javafx.AssociationController"
       spacing="15"
       style="-fx-padding: 20;">
 
-    <Label fx:id="associationNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-
+    <!-- Title and Leader -->
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Leader:" style="-fx-font-weight: bold;"/>
-        <Label fx:id="leaderLabel"/>
+        <Label fx:id="associationNameLabel" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button fx:id="manageMembersBtn" text="Manage Members" visible="false" onAction="#handleManageMembers"/>
-        <Button fx:id="addNewsBtn" text="Add News" visible="false" onAction="#handleAddNews"/>
-        <Button fx:id="deleteAssociationBtn" text="Delete Association" visible="false"
-                style="-fx-background-color: #e74c3c; -fx-text-fill: white;"
-                onAction="#handleDeleteAssociation"/>
+        <Button fx:id="applyBtn" text="Apply" onAction="#handleApply" style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+        <Button fx:id="followBtn" text="Follow" onAction="#handleFollow" style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
     </HBox>
 
-    <Label text="Latest News:" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-    <ListView fx:id="newsListView" style="-fx-font-size: 14px;"/>
+    <HBox spacing="10">
+        <Label text="Leader:" style="-fx-font-weight: bold;"/>
+        <Label fx:id="leaderLabel" text="No Leader"/>
+    </HBox>
+
+    <!-- Buttons -->
+    <HBox spacing="10">
+        <Button fx:id="manageMembersBtn" text="Manage Members" onAction="#handleManageMembers"/>
+        <Button fx:id="addNewsBtn" text="Add News" onAction="#handleAddNews"/>
+        <Button fx:id="manageEventsBtn" text="Manage Events" onAction="#handleManageEvents"/>
+        <Button fx:id="viewStatsBtn" text="View Stats" onAction="#handleViewStats"/>
+        <Button fx:id="viewApplicantsBtn" text="View Applicants" onAction="#handleViewApplicants"/>
+        <Button fx:id="deleteAssociationBtn" text="Delete Association" style="-fx-background-color: #ff4444;" onAction="#handleDeleteAssociation"/>
+    </HBox>
+
+    <!-- Departments and News in Two Columns with Space -->
+    <GridPane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" hgap="10" style="-fx-padding: 0 0 10 0;">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" minWidth="200" percentWidth="50" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="200" percentWidth="50" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="NEVER" minHeight="30" />
+            <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+
+        <!-- Departments Column -->
+        <Label text="Departments" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold; -fx-font-size: 20; -fx-padding: 0 0 5 0;" />
+        <ListView fx:id="departmentsListView" GridPane.columnIndex="0" GridPane.rowIndex="1" VBox.vgrow="ALWAYS" />
+
+        <!-- News Column -->
+        <Label text="News" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-weight: bold; -fx-font-size: 20; -fx-padding: 0 0 5 0;" />
+        <ListView fx:id="newsListView" GridPane.columnIndex="1" GridPane.rowIndex="1" VBox.vgrow="ALWAYS" />
+    </GridPane>
+
+    <!-- Events ComboBox -->
+    <ComboBox fx:id="eventsComboBox" promptText="Select an Event"/>
 </VBox>

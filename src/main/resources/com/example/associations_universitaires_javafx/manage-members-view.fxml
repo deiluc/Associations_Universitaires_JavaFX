@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1"
+<VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.associations_universitaires_javafx.ManageMembersController"
       spacing="15"
@@ -17,7 +17,6 @@
     </HBox>
 
     <ListView fx:id="membersListView" style="-fx-pref-height: 300;"/>
-
 
     <HBox spacing="10">
         <Button text="Remove Selected" onAction="#handleRemoveMember"

@@ -3,9 +3,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<VBox xmlns="http://javafx.com/javafx/11.0.1"
+
+<VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.associations_universitaires_javafx.ListAssociationsController"
       spacing="15"
@@ -14,17 +14,25 @@
 
     <Label text="Associations List" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
 
-    <TableView fx:id="associationsTable" style="-fx-font-size: 14px;">
+    <TableView fx:id="associationsTable" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn text="Name" prefWidth="200">
-                <cellValueFactory><PropertyValueFactory property="name"/></cellValueFactory>
+                <cellValueFactory>
+                    <PropertyValueFactory property="name"/>
+                </cellValueFactory>
             </TableColumn>
             <TableColumn text="Abbreviation" prefWidth="100">
-                <cellValueFactory><PropertyValueFactory property="abbreviation"/></cellValueFactory>
+                <cellValueFactory>
+                    <PropertyValueFactory property="abbreviation"/>
+                </cellValueFactory>
             </TableColumn>
             <TableColumn text="Leader" prefWidth="150">
-                <cellValueFactory><PropertyValueFactory property="leaderName"/></cellValueFactory>
+                <cellValueFactory>
+                    <PropertyValueFactory property="leaderName"/>
+                </cellValueFactory>
             </TableColumn>
+            <TableColumn text="Apply" prefWidth="100"/>
+            <TableColumn text="Follow" prefWidth="100"/>
         </columns>
     </TableView>
 

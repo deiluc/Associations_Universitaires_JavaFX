@@ -10,9 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.sql.*;
 
 public class AddAssociationController {
     @FXML private TextField nameField;
@@ -26,6 +24,12 @@ public class AddAssociationController {
     private String currentUserRole;
 
     private int departmentCount = 3;
+
+    public void initializeUserData(String email, String name, String role) {
+        this.currentUserEmail = email;
+        this.currentUserName = name;
+        this.currentUserRole = role;
+    }
 
     @FXML
     private void handleAddDepartment() {
@@ -48,7 +52,7 @@ public class AddAssociationController {
 
     @FXML
     private void handleRemoveDepartment() {
-        if (departmentCount > 1) { // Keep at least one department
+        if (departmentCount > 1) {
             departmentsContainer.getChildren().remove(departmentCount - 1);
             departmentCount--;
         }
@@ -56,49 +60,60 @@ public class AddAssociationController {
 
     @FXML
     private void handleCreateAssociation() {
-        try {
-            // Validate required fields
+        try (Connection conn = DatabaseConnection.getConnection()) {
             if (nameField.getText().isEmpty() || descriptionField.getText().isEmpty()) {
                 showAlert("Error", "Name and Description are required fields!");
                 return;
             }
 
-            // Collect all data
             String name = nameField.getText();
             String description = descriptionField.getText();
             String abbreviation = abbreviationField.getText();
             String email = emailField.getText();
             String phone = phoneField.getText();
 
-            // Collect departments
-            StringBuilder departments = new StringBuilder();
-            departmentsContainer.getChildren().forEach(node -> {
-                if (node instanceof HBox) {
-                    HBox box = (HBox) node;
-                    TextField deptField = (TextField) box.getChildren().get(0);
-                    String dept = deptField.getText();
-                    if (!dept.isEmpty()) {
-                        if (departments.length() > 0) departments.append(":");
-                        departments.append(dept);
-                    }
+            String checkSql = "SELECT 1 FROM associations WHERE name = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                checkStmt.setString(1, name);
+                if (checkStmt.executeQuery().next()) {
+                    showAlert("Error", "Association name already exists!");
+                    return;
                 }
-            });
-
-            // Save to associations.txt
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("associations.txt", true))) {
-                writer.write(String.format("%s:%s:%s:%s:%s:%s\n",
-                        name, description, abbreviation, departments.toString(), email, phone));
             }
 
-            // Show success message
+            String insertAssocSql = "INSERT INTO associations (name, description, abbreviation, email, phone) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(insertAssocSql, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setString(1, name);
+                stmt.setString(2, description);
+                stmt.setString(3, abbreviation);
+                stmt.setString(4, email);
+                stmt.setString(5, phone);
+                stmt.executeUpdate();
+
+                ResultSet rs = stmt.getGeneratedKeys();
+                int associationId = rs.next() ? rs.getInt(1) : -1;
+
+                String insertDeptSql = "INSERT INTO departments (association_id, name) VALUES (?, ?)";
+                try (PreparedStatement deptStmt = conn.prepareStatement(insertDeptSql)) {
+                    for (var node : departmentsContainer.getChildren()) {
+                        if (node instanceof HBox) {
+                            HBox box = (HBox) node;
+                            TextField deptField = (TextField) box.getChildren().get(0);
+                            String dept = deptField.getText();
+                            if (!dept.isEmpty()) {
+                                deptStmt.setInt(1, associationId);
+                                deptStmt.setString(2, dept);
+                                deptStmt.executeUpdate();
+                            }
+                        }
+                    }
+                }
+            }
+
             showAlert("Success", "Association created successfully!");
-
-            // Return to home page
             handleCancel();
-
-        } catch (IOException e) {
+        } catch (SQLException e) {
             showAlert("Error", "Failed to save association: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -118,24 +133,16 @@ public class AddAssociationController {
             ));
             Parent root = loader.load();
 
-            // Get the controller and FULLY reinitialize
             HomeController controller = loader.getController();
             controller.initializeUserData(currentUserEmail, currentUserName, currentUserRole);
 
-            // Get the current stage
             Stage stage = (Stage) nameField.getScene().getWindow();
-
-            // Create new scene to ensure complete refresh
             Scene scene = new Scene(root, 700, 650);
             stage.setScene(scene);
             stage.setTitle("UNSTPB Dashboard");
-
-            // Force focus refresh
-            stage.hide();
             stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
             showAlert("Error", "Failed to return to home: " + e.getMessage());
         }
     }
-}
+}   

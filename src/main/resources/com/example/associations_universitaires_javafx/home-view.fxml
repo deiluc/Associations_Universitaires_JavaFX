@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1"
+<BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.associations_universitaires_javafx.HomeController"
             style="-fx-padding: 20;">
@@ -14,39 +13,57 @@
             <HBox style="-fx-background-color: #2c3e50; -fx-padding: 15;" alignment="CENTER_LEFT">
                 <Label fx:id="welcomeLabel" style="-fx-text-fill: white; -fx-font-size: 18pt;"/>
                 <Region HBox.hgrow="ALWAYS"/>
+
+                <Button fx:id="notificationBtn" text="🔔" onAction="#handleViewNotifications"
+                        style="-fx-font-size: 14pt; -fx-padding: 8 20; -fx-background-color: #3498db; -fx-text-fill: white;">
+                    <HBox.margin>
+                        <Insets right="5"/>
+                    </HBox.margin>
+                </Button>
+
                 <MenuButton text="Profile" style="-fx-font-size: 14pt; -fx-padding: 8 20; -fx-background-color: #3498db; -fx-text-fill: white;">
                     <items>
-                        <MenuItem text="View Profile" onAction="#handleViewProfile" />
-                        <MenuItem text="Logout" onAction="#handleLogout" />
+                        <MenuItem text="View Profile" onAction="#handleViewProfile"/>
+                        <MenuItem text="Logout" onAction="#handleLogout"/>
                     </items>
                 </MenuButton>
-                </HBox>
+            </HBox>
+
 
             <!-- Admin Announcement Button -->
             <HBox alignment="CENTER_RIGHT" style="-fx-padding: 0 15 10 15;">
-                <Button fx:id="addAnnouncementBtn" text="Adauga anunt"
+                <Button fx:id="addAnnouncementBtn" text="Add Announcement"
                         onAction="#handleAddAnnouncement"
                         style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
             </HBox>
 
             <!-- Navigation Menus -->
             <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 0 15;">
-                <MenuButton text="Asociati" style="-fx-font-size: 14pt;">
+                <MenuButton text="Associations" style="-fx-font-size: 14pt;">
                     <items>
-                        <MenuItem text="Lista Asociatii" onAction="#handleListAssociations"/>
-                        <MenuItem fx:id="addAsociatieItem" text="Adauga Asociatie" onAction="#handleAddAsociatie"/>
+                        <MenuItem fx:id="addAsociatieItem" text="Add Association" onAction="#handleAddAsociatie"/>
+                        <MenuItem text="List Associations" onAction="#handleListAssociations"/>
+                        <MenuItem fx:id="viewApprovedEventsItem" text="View Approved Events" onAction="#handleViewApprovedEvents"/>
                     </items>
                 </MenuButton>
+                <Button fx:id="manageEventsBtn" text="Manage Events" onAction="#handleManageEvents"
+                        style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+                <Button fx:id="manageEventStatusBtn" text="Approve/Reject Events" onAction="#handleManageEventStatus"
+                        style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+                <Button text="Add Test User" onAction="#addUser" style="-fx-font-size: 14pt; -fx-padding: 10 25;"/>
             </HBox>
         </VBox>
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
-                    style="-fx-background: #f5f5f5; -fx-border-color: #f5f5f5;">
-            <VBox fx:id="announcementsContainer" spacing="20"
-                  style="-fx-padding: 20; -fx-background-color: #f5f5f5;"/>
-        </ScrollPane>
+        <VBox spacing="5">
+            <Label text="News" style="-fx-font-size: 18pt; -fx-font-weight: bold; -fx-padding: 0 0 0 0;" />
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                        style="-fx-background: #f5f5f5; -fx-border-color: #f5f5f5;">
+                <VBox fx:id="announcementsContainer" spacing="20"
+                      style="-fx-padding: 20; -fx-background-color: #f5f5f5;"/>
+            </ScrollPane>
+        </VBox>
     </center>
 
     <bottom>
