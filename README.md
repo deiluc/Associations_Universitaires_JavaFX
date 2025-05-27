@@ -461,11 +461,3 @@ See `database.sql` for the full schema with foreign key constraints.
 3. Commit changes (`git commit -m "Add your feature"`).
 4. Push to the branch (`git push origin feature/your-feature`).
 5. Open a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
-## Contact
-
-For issues or questions, contact [your-email@example.com] or open an issue on GitHub.
