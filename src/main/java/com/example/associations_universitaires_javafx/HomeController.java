@@ -12,19 +12,24 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.net.URL;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class HomeController {
     @FXML private Label welcomeLabel;
     @FXML private MenuItem addAsociatieItem;
-    @FXML private Button addAnnouncementBtn;
+    @FXML private MenuItem addAnnouncementItem;
     @FXML private VBox announcementsContainer;
-    @FXML private Button manageEventsBtn;
+    @FXML private MenuItem manageEventsItem;
     @FXML private MenuItem viewApprovedEventsItem;
-    @FXML private Button manageEventStatusBtn;
+    @FXML private MenuItem manageEventStatusItem;
     @FXML private Button notificationBtn;
+    @FXML private MenuButton administrativeMenuBtn; // Added field for the Administrativ MenuButton
+    @FXML private MenuItem profAllocationItem;
+
 
     private String currentUserRole;
     private String currentUserEmail;
@@ -39,20 +44,32 @@ public class HomeController {
         configureMenuForUserRole();
         loadAnnouncements();
         updateNotificationButton();
-
-        addAnnouncementBtn.setVisible("admin".equals(role));
-        addAnnouncementBtn.setManaged("admin".equals(role));
-        manageEventsBtn.setVisible("admin".equals(role) || "professor".equals(role));
-        manageEventStatusBtn.setVisible("admin".equals(role) || "professor".equals(role));
-        viewApprovedEventsItem.setVisible(true);
     }
 
     private void configureMenuForUserRole() {
+        boolean isAdmin = "admin".equals(currentUserRole);
+        boolean isAdminOrProfessor = isAdmin || "prof".equals(currentUserRole);
+
         if (addAsociatieItem != null) {
-            addAsociatieItem.setVisible("admin".equals(currentUserRole));
+            addAsociatieItem.setVisible(isAdmin);
+        }
+        if (addAnnouncementItem != null) {
+            addAnnouncementItem.setVisible(isAdmin);
+        }
+        if (manageEventsItem != null) {
+            manageEventsItem.setVisible(isAdminOrProfessor);
+        }
+        if (manageEventStatusItem != null) {
+            manageEventStatusItem.setVisible(isAdminOrProfessor);
         }
         if (viewApprovedEventsItem != null) {
             viewApprovedEventsItem.setVisible(true);
+        }
+        if (profAllocationItem != null) {
+            profAllocationItem.setVisible(isAdmin);
+        }
+        if (administrativeMenuBtn != null) {
+            administrativeMenuBtn.setVisible(isAdmin);
         }
     }
 
@@ -279,7 +296,30 @@ public class HomeController {
             showAlert("Error", "Failed to load add association page: " + e.getMessage());
         }
     }
+    @FXML
+    private void handleProfAllocation() {
+        try {
+            String fxmlPath = "/com/example/associations_universitaires_javafx/prof-allocation-view.fxml";
+            URL resourceUrl = getClass().getResource(fxmlPath);
+            if (resourceUrl == null) {
+                System.err.println("FXML file not found at: " + fxmlPath);
+                throw new IllegalStateException("FXML file not found at: " + fxmlPath);
+            }
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            Parent root = loader.load();
 
+            ProfAllocationController controller = loader.getController();
+            controller.initializeData(currentUserEmail);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root, 700, 500));
+            stage.setTitle("Professor Allocation");
+            stage.show();
+        } catch (Exception e) {
+            showAlert("Error", "Failed to load professor allocation view: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
     @FXML
     private void handleLogout() {
         try {
@@ -483,6 +523,57 @@ public class HomeController {
             showAlert("Success", "User added successfully with email: " + email);
         } catch (SQLException e) {
             showAlert("Error", "Failed to add user: " + e.getMessage());
+        }
+    }
+
+    // Inner class for Announcement
+    public static class Announcement {
+        private final int id;
+        private final String title;
+        private final String content;
+        private final int authorId;
+        private final String authorName;
+        private final LocalDateTime datePosted;
+
+        public Announcement(int id, String title, String content, int authorId, String authorName, LocalDateTime datePosted) {
+            this.id = id;
+            this.title = title;
+            this.content = content;
+            this.authorId = authorId;
+            this.authorName = authorName;
+            this.datePosted = datePosted;
+        }
+
+        public Announcement(String title, String content, int authorId, String authorName, LocalDateTime datePosted) {
+            this(0, title, content, authorId, authorName, datePosted);
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public int getAuthorId() {
+            return authorId;
+        }
+
+        public String getAuthorName() {
+            return authorName;
+        }
+
+        public LocalDateTime getDatePosted() {
+            return datePosted;
+        }
+
+        public String getFormattedDate() {
+            return datePosted.format(DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm"));
         }
     }
 }

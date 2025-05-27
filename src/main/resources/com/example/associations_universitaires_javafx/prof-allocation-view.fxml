@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.associations_universitaires_javafx.ProfAllocationController">
+    <children>
+        <Label text="Professor Allocation" style="-fx-font-size: 16; -fx-font-weight: bold;" VBox.vgrow="NEVER">
+            <padding>
+                <Insets top="10" bottom="10" left="10" right="10"/>
+            </padding>
+        </Label>
+        <TableView fx:id="profTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="nameColumn" text="Name" prefWidth="150"/>
+                <TableColumn fx:id="emailColumn" text="Email" prefWidth="200"/>
+                <TableColumn fx:id="roleColumn" text="Role" prefWidth="100"/>
+                <TableColumn fx:id="associationColumn" text="Association" prefWidth="150"/>
+                <TableColumn fx:id="actionColumn" text="Actions" prefWidth="200"/>
+            </columns>
+        </TableView>
+        <VBox spacing="10" VBox.vgrow="NEVER">
+            <children>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Department:"/>
+                        <TextField fx:id="departmentField" prefWidth="200"/>
+                    </children>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Title:"/>
+                        <TextField fx:id="titleField" prefWidth="200"/>
+                    </children>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Office Location:"/>
+                        <TextField fx:id="officeLocationField" prefWidth="200"/>
+                    </children>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Website URL:"/>
+                        <TextField fx:id="websiteUrlField" prefWidth="200"/>
+                    </children>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Allocate to Association:"/>
+                        <ComboBox fx:id="associationComboBox" prefWidth="200"/>
+                    </children>
+                </HBox>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Button fx:id="allocateBtn" text="Allocate Selected" onAction="#handleGlobalAllocate"/>
+                        <Button fx:id="removeAllocationBtn" text="Remove Allocation" onAction="#handleRemoveAllocation"/>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets top="10" bottom="10" left="10" right="10"/>
+            </padding>
+        </VBox>
+    </children>
+</VBox>

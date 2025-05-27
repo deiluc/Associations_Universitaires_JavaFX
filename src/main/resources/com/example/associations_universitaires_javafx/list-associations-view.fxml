@@ -16,28 +16,28 @@
 
     <TableView fx:id="associationsTable" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn text="Name" prefWidth="200">
+            <TableColumn fx:id="nameColumn" text="Name" prefWidth="200">
                 <cellValueFactory>
                     <PropertyValueFactory property="name"/>
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn text="Abbreviation" prefWidth="100">
+            <TableColumn fx:id="abbrevColumn" text="Abbreviation" prefWidth="100">
                 <cellValueFactory>
                     <PropertyValueFactory property="abbreviation"/>
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn text="Leader" prefWidth="150">
+            <TableColumn fx:id="leaderColumn" text="Leader" prefWidth="150">
                 <cellValueFactory>
                     <PropertyValueFactory property="leaderName"/>
                 </cellValueFactory>
             </TableColumn>
-            <TableColumn text="Apply" prefWidth="100"/>
-            <TableColumn text="Follow" prefWidth="100"/>
+            <TableColumn fx:id="followColumn" text="Follow" prefWidth="100"/>
+            <TableColumn fx:id="applyColumn" text="Apply" prefWidth="102"/>
         </columns>
     </TableView>
 
     <HBox spacing="20" alignment="CENTER">
-        <Button text="Back" onAction="#handleBack"
+        <Button fx:id="backBtn" text="Back" onAction="#handleBack"
                 style="-fx-font-size: 14px; -fx-padding: 8 20; -fx-background-color: #3498db; -fx-text-fill: white;"/>
     </HBox>
 </VBox>

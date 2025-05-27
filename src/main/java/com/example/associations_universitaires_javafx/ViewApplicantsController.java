@@ -171,24 +171,51 @@ public class ViewApplicantsController {
     }
 
     private void handleAccept(Applicant applicant) {
-        String sql = "UPDATE applications SET status = 'ACCEPTED', updated_at = NOW() WHERE user_id = ? AND association_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, applicant.getUserId());
-            stmt.setInt(2, associationId);
-            stmt.executeUpdate();
-            addNotification(applicant.getUserId(), "Accepted to " + associationName);
-            // Add user to members table
-            String memberSql = "INSERT INTO members (user_id, association_id) VALUES (?, ?)";
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            // Update application status
+            String sql = "UPDATE applications SET status = 'ACCEPTED', updated_at = NOW() WHERE user_id = ? AND association_id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, applicant.getUserId());
+                stmt.setInt(2, associationId);
+                stmt.executeUpdate();
+            }
+
+            // Add to members table
+            String memberSql = "INSERT INTO members (user_id, association_id, is_leader) VALUES (?, ?, 0)";
             try (PreparedStatement memberStmt = conn.prepareStatement(memberSql)) {
                 memberStmt.setInt(1, applicant.getUserId());
                 memberStmt.setInt(2, associationId);
                 memberStmt.executeUpdate();
             }
+
+            // Notify user
+            addNotification(applicant.getUserId(), "Accepted to " + associationName);
+
+            conn.commit();
             loadApplicants();
             showAlert("Success", "Applicant accepted as member.");
         } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    showAlert("Error", "Rollback failed: " + rollbackEx.getMessage());
+                }
+            }
             showAlert("Error", "Failed to accept applicant: " + e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException closeEx) {
+                    showAlert("Error", "Failed to close connection: " + closeEx.getMessage());
+                }
+            }
         }
     }
 

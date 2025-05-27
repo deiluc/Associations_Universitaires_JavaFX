@@ -12,7 +12,7 @@
     <HBox spacing="10" alignment="CENTER_LEFT">
         <Label fx:id="associationNameLabel" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
         <Region HBox.hgrow="ALWAYS"/>
-        <Button fx:id="applyBtn" text="Apply" onAction="#handleApply" style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+        <Button fx:id="applyBtn" text="Apply" onAction="#handleApply" style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;" visible="false" managed="false"/>
         <Button fx:id="followBtn" text="Follow" onAction="#handleFollow" style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
     </HBox>
 
@@ -21,13 +21,26 @@
         <Label fx:id="leaderLabel" text="No Leader"/>
     </HBox>
 
-    <!-- Buttons -->
     <HBox spacing="10">
-        <Button fx:id="manageMembersBtn" text="Manage Members" onAction="#handleManageMembers"/>
-        <Button fx:id="addNewsBtn" text="Add News" onAction="#handleAddNews"/>
-        <Button fx:id="manageEventsBtn" text="Manage Events" onAction="#handleManageEvents"/>
-        <Button fx:id="viewStatsBtn" text="View Stats" onAction="#handleViewStats"/>
-        <Button fx:id="viewApplicantsBtn" text="View Applicants" onAction="#handleViewApplicants"/>
+        <Label text="Professor Coordinator:" style="-fx-font-weight: bold;"/>
+        <Label fx:id="profCoordLabel"/>
+    </HBox>
+
+    <!-- Buttons -->
+
+
+    <HBox spacing="10">
+        <Button fx:id="departmentChatsBtn" text="Department Chats" onAction="#handleDepartmentChats"/>
+        <MenuButton fx:id="administrativeMenuBtn" text="Administrative">
+            <items>
+                <MenuItem fx:id="manageMembersItem" text="Manage Members" onAction="#handleManageMembers"/>
+                <MenuItem fx:id="addNewsItem" text="Add News" onAction="#handleAddNews"/>
+                <MenuItem fx:id="manageEventsItem" text="Manage Events" onAction="#handleManageEvents"/>
+                <MenuItem fx:id="viewStatsItem" text="View Stats" onAction="#handleViewStats"/>
+                <MenuItem fx:id="viewApplicantsItem" text="View Applicants" onAction="#handleViewApplicants"/>
+                <MenuItem fx:id="editAssociationItem" text="Edit Association" onAction="#handleEditAssociation"/>
+            </items>
+        </MenuButton>
         <Button fx:id="deleteAssociationBtn" text="Delete Association" style="-fx-background-color: #ff4444;" onAction="#handleDeleteAssociation"/>
     </HBox>
 
