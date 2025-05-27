@@ -29,27 +29,23 @@
                 </MenuButton>
             </HBox>
 
-
-            <!-- Admin Announcement Button -->
-            <HBox alignment="CENTER_RIGHT" style="-fx-padding: 0 15 10 15;">
-                <Button fx:id="addAnnouncementBtn" text="Add Announcement"
-                        onAction="#handleAddAnnouncement"
-                        style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
-            </HBox>
-
             <!-- Navigation Menus -->
             <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 0 15;">
                 <MenuButton text="Associations" style="-fx-font-size: 14pt;">
                     <items>
-                        <MenuItem fx:id="addAsociatieItem" text="Add Association" onAction="#handleAddAsociatie"/>
                         <MenuItem text="List Associations" onAction="#handleListAssociations"/>
                         <MenuItem fx:id="viewApprovedEventsItem" text="View Approved Events" onAction="#handleViewApprovedEvents"/>
                     </items>
                 </MenuButton>
-                <Button fx:id="manageEventsBtn" text="Manage Events" onAction="#handleManageEvents"
-                        style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
-                <Button fx:id="manageEventStatusBtn" text="Approve/Reject Events" onAction="#handleManageEventStatus"
-                        style="-fx-font-size: 12pt; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+                <MenuButton text="Administrative" fx:id="administrativeMenuBtn" style="-fx-font-size: 14pt;">
+                    <items>
+                        <MenuItem fx:id="addAnnouncementItem" text="Add Announcement" onAction="#handleAddAnnouncement"/>
+                        <MenuItem fx:id="addAsociatieItem" text="Add Association" onAction="#handleAddAsociatie"/>
+                        <MenuItem fx:id="manageEventsItem" text="Manage Events" onAction="#handleManageEvents"/>
+                        <MenuItem fx:id="manageEventStatusItem" text="Approve/Reject Events" onAction="#handleManageEventStatus"/>
+                        <MenuItem fx:id="profAllocationItem" text="Professor Allocation" onAction="#handleProfAllocation"/>
+                    </items>
+                </MenuButton>
                 <Button text="Add Test User" onAction="#addUser" style="-fx-font-size: 14pt; -fx-padding: 10 25;"/>
             </HBox>
         </VBox>

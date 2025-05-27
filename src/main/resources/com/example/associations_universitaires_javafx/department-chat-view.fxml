@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.associations_universitaires_javafx.DepartmentChatController"
+            style="-fx-padding: 10; -fx-background-color: #f0f0f0;">
+
+    <top>
+        <VBox spacing="10" style="-fx-padding: 10; -fx-background-color: #075e54;">
+            <Label fx:id="associationNameLabel" style="-fx-font-size: 18pt; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            <ComboBox fx:id="departmentComboBox" promptText="Select Department" style="-fx-pref-width: 200;">
+                <tooltip>
+                    <Tooltip fx:id="departmentTooltip" style="-fx-font-size: 12pt;"/>
+                </tooltip>
+            </ComboBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" vbarPolicy="ALWAYS" hbarPolicy="NEVER">
+            <VBox fx:id="messageContainer" spacing="5" style="-fx-padding: 10;"/>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="5" style="-fx-padding: 10; -fx-background-color: #ffffff;">
+            <TextArea fx:id="messageInput" promptText="Type a message..." wrapText="true" prefRowCount="2" HBox.hgrow="ALWAYS"/>
+            <Button fx:id="sendButton" text="Send" onAction="#handleSendMessage" style="-fx-background-color: #075e54; -fx-text-fill: white; -fx-font-size: 12pt;"/>
+        </HBox>
+    </bottom>
+</BorderPane>

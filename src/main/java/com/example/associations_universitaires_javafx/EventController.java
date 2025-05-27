@@ -40,7 +40,7 @@ public class EventController {
     private String currentUserEmail;
     private String currentUserRole;
     private int currentUserId;
-    private Event editingEvent; // Track the event being edited
+    private Event editingEvent;
 
     public static class Event {
         private final SimpleStringProperty title;
@@ -74,26 +74,32 @@ public class EventController {
         this.currentUserId = currentUserId;
 
         setupTable();
+        loadAssociations();
         loadEvents();
-        loadAssociations(); // Always load associations for manual selection
 
         boolean isAdmin = "admin".equals(currentUserRole);
         boolean isLeader = checkIfLeader();
-        createEventBtn.setVisible(isAdmin || isLeader);
+        boolean isProf = "prof".equals(currentUserRole) && isProfessorAssigned();
+        createEventBtn.setVisible(isAdmin || isLeader || isProf);
     }
 
     private void loadAssociations() {
         ObservableList<String> associations = FXCollections.observableArrayList();
         String sql = "SELECT name FROM associations";
+        if ("prof".equals(currentUserRole)) {
+            sql = "SELECT a.name FROM associations a JOIN professor_associations pa ON a.association_id = pa.association_id WHERE pa.professor_id = ?";
+        }
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            if ("prof".equals(currentUserRole)) {
+                stmt.setInt(1, currentUserId);
+            }
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 associations.add(rs.getString("name"));
             }
             associationComboBox.setItems(associations);
-            // Pre-select the association if coming from association context
-            if (associationName != null) {
+            if (associationName != null && associations.contains(associationName)) {
                 associationComboBox.setValue(associationName);
             } else if (!associations.isEmpty()) {
                 associationComboBox.setValue(associations.get(0));
@@ -101,6 +107,18 @@ public class EventController {
         } catch (SQLException e) {
             LOGGER.severe("Failed to load associations: " + e.getMessage());
             showAlert("Error", "Failed to load associations: " + e.getMessage());
+        }
+    }
+
+    private boolean isProfessorAssigned() {
+        String sql = "SELECT 1 FROM professor_associations WHERE professor_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, currentUserId);
+            return stmt.executeQuery().next();
+        } catch (SQLException e) {
+            LOGGER.severe("Failed to check professor assignment: " + e.getMessage());
+            return false;
         }
     }
 
@@ -150,10 +168,11 @@ public class EventController {
                     HBox buttons = new HBox(5);
                     boolean isAdmin = "admin".equals(currentUserRole);
                     boolean isLeader = checkIfLeader();
-                    if (isAdmin && !"APPROVED".equals(evt.getStatus()) && !"REJECTED".equals(evt.getStatus())) {
+                    boolean isProf = "prof".equals(currentUserRole) && isProfessorAssignedToEvent(evt.getEventId());
+                    if ((isAdmin || isLeader || isProf) && !"APPROVED".equals(evt.getStatus()) && !"REJECTED".equals(evt.getStatus())) {
                         buttons.getChildren().addAll(approveBtn, rejectBtn);
                     }
-                    if (isAdmin || isLeader) {
+                    if (isAdmin || isLeader || isProf) {
                         buttons.getChildren().addAll(editBtn, cancelBtn);
                     }
                     setGraphic(buttons.getChildren().isEmpty() ? null : buttons);
@@ -163,28 +182,42 @@ public class EventController {
         actionColumn.setCellFactory(cellFactory);
     }
 
+    private boolean isProfessorAssignedToEvent(int eventId) {
+        String sql = "SELECT 1 FROM events e JOIN professor_associations pa ON e.association_id = pa.association_id WHERE e.event_id = ? AND pa.professor_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, eventId);
+            stmt.setInt(2, currentUserId);
+            return stmt.executeQuery().next();
+        } catch (SQLException e) {
+            LOGGER.severe("Failed to check professor event assignment: " + e.getMessage());
+            return false;
+        }
+    }
+
     private void loadEvents() {
         eventsTable.getItems().clear();
         String sql;
-        if (associationName == null) {
-            // Load all events if no specific association (e.g., from home page)
-            sql = "SELECT event_id, title, event_date, end_date, start_time, end_time, location, status " +
-                    "FROM events";
+        if ("prof".equals(currentUserRole)) {
+            sql = "SELECT e.event_id, e.title, e.event_date, e.end_date, e.start_time, e.end_time, e.location, e.status " +
+                    "FROM events e JOIN professor_associations pa ON e.association_id = pa.association_id " +
+                    "WHERE pa.professor_id = ?";
+        } else if (associationName == null) {
+            sql = "SELECT event_id, title, event_date, end_date, start_time, end_time, location, status FROM events";
         } else {
-            // Load events for the specific association
             sql = "SELECT event_id, title, event_date, end_date, start_time, end_time, location, status " +
                     "FROM events WHERE association_id = (SELECT association_id FROM associations WHERE name = ?)";
         }
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            if (associationName != null) {
+            if ("prof".equals(currentUserRole)) {
+                stmt.setInt(1, currentUserId);
+            } else if (associationName != null) {
                 stmt.setString(1, associationName);
             }
-            LOGGER.info("Executing loadEvents with association: " + (associationName != null ? associationName : "All"));
             ResultSet rs = stmt.executeQuery();
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-            int count = 0;
             while (rs.next()) {
                 String dateRange = rs.getTimestamp("event_date") != null && rs.getTimestamp("end_date") != null ?
                         rs.getTimestamp("event_date").toLocalDateTime().format(dateFormatter) + " to " +
@@ -202,11 +235,9 @@ public class EventController {
                         location,
                         status
                 ));
-                count++;
             }
-            LOGGER.info("Loaded " + count + " events for association: " + (associationName != null ? associationName : "All"));
         } catch (SQLException e) {
-            LOGGER.severe("Failed to load events: " + e.getMessage() + ", SQL State: " + e.getSQLState());
+            LOGGER.severe("Failed to load events: " + e.getMessage());
             showAlert("Error", "Failed to load events: " + e.getMessage());
         }
     }
@@ -227,7 +258,6 @@ public class EventController {
         String description = descriptionField.getText().trim();
         String selectedAssociation = associationComboBox.getValue();
 
-        // Validation
         if (title.isEmpty() || startDate == null || endDate == null || selectedAssociation == null) {
             showAlert("Error", "Title, start date, end date, and association are required!");
             return;
@@ -261,13 +291,11 @@ public class EventController {
         Integer associationId = getAssociationId(selectedAssociation);
         if (associationId == null) {
             showAlert("Error", "No association found for name: " + selectedAssociation);
-            LOGGER.severe("No association found for name: " + selectedAssociation);
             return;
         }
 
         if (!isValidUserId(currentUserId)) {
             showAlert("Error", "Invalid user ID: " + currentUserId);
-            LOGGER.severe("Invalid user ID: " + currentUserId);
             return;
         }
 
@@ -280,37 +308,18 @@ public class EventController {
             stmt.setString(3, description.isEmpty() ? null : description);
             stmt.setTimestamp(4, Timestamp.valueOf(startDate.atStartOfDay()));
             stmt.setTimestamp(5, Timestamp.valueOf(endDate.atStartOfDay()));
-            if (startLocalTime != null) {
-                stmt.setTime(6, Time.valueOf(startLocalTime));
-            } else {
-                stmt.setNull(6, Types.TIME);
-            }
-            if (endLocalTime != null) {
-                stmt.setTime(7, Time.valueOf(endLocalTime));
-            } else {
-                stmt.setNull(7, Types.TIME);
-            }
+            stmt.setTime(6, startLocalTime != null ? Time.valueOf(startLocalTime) : null);
+            stmt.setTime(7, endLocalTime != null ? Time.valueOf(endLocalTime) : null);
             stmt.setString(8, location.isEmpty() ? null : location);
             stmt.setInt(9, currentUserId);
             stmt.setString(10, "PENDING");
-            int rowsAffected = stmt.executeUpdate();
-
-            if (rowsAffected > 0) {
-                ResultSet generatedKeys = stmt.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    int eventId = generatedKeys.getInt(1);
-                    LOGGER.info("Created event with ID: " + eventId + ", Title: " + title + ", Association ID: " + associationId + ", Created by: " + currentUserId + ", Status: PENDING");
-                }
-                loadEvents();
-                clearForm();
-                showAlert("Success", "Event created successfully and is pending approval!");
-            } else {
-                LOGGER.warning("No rows affected when creating event: " + title);
-                showAlert("Error", "Event creation failed: No rows affected.");
-            }
+            stmt.executeUpdate();
+            loadEvents();
+            clearForm();
+            showAlert("Success", "Event created successfully and is pending approval!");
         } catch (SQLException e) {
-            LOGGER.severe("Failed to create event: " + e.getMessage() + ", SQL State: " + e.getSQLState());
-            showAlert("Error", "Failed to create event: " + e.getMessage() + " (SQL State: " + e.getSQLState() + ")");
+            LOGGER.severe("Failed to create event: " + e.getMessage());
+            showAlert("Error", "Failed to create event: " + e.getMessage());
         }
     }
 
@@ -342,21 +351,18 @@ public class EventController {
         }
 
         locationField.setText(event.getLocation());
-        // Fetch description from the database
         String sql = "SELECT description FROM events WHERE event_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, event.getEventId());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                String description = rs.getString("description");
-                descriptionField.setText(description != null ? description : "");
+                descriptionField.setText(rs.getString("description"));
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to load description for event " + event.getEventId() + ": " + e.getMessage());
+            LOGGER.severe("Failed to load description: " + e.getMessage());
         }
 
-        // Fetch association name
         String assocName = getAssociationNameForEvent(event.getEventId());
         if (assocName != null) {
             associationComboBox.setValue(assocName);
@@ -375,7 +381,6 @@ public class EventController {
         String description = descriptionField.getText().trim();
         String selectedAssociation = associationComboBox.getValue();
 
-        // Validation
         if (title.isEmpty() || startDate == null || endDate == null || selectedAssociation == null) {
             showAlert("Error", "Title, start date, end date, and association are required!");
             return;
@@ -409,7 +414,6 @@ public class EventController {
         Integer associationId = getAssociationId(selectedAssociation);
         if (associationId == null) {
             showAlert("Error", "No association found for name: " + selectedAssociation);
-            LOGGER.severe("No association found for name: " + selectedAssociation);
             return;
         }
 
@@ -421,31 +425,16 @@ public class EventController {
             stmt.setString(3, description.isEmpty() ? null : description);
             stmt.setTimestamp(4, Timestamp.valueOf(startDate.atStartOfDay()));
             stmt.setTimestamp(5, Timestamp.valueOf(endDate.atStartOfDay()));
-            if (startLocalTime != null) {
-                stmt.setTime(6, Time.valueOf(startLocalTime));
-            } else {
-                stmt.setNull(6, Types.TIME);
-            }
-            if (endLocalTime != null) {
-                stmt.setTime(7, Time.valueOf(endLocalTime));
-            } else {
-                stmt.setNull(7, Types.TIME);
-            }
+            stmt.setTime(6, startLocalTime != null ? Time.valueOf(startLocalTime) : null);
+            stmt.setTime(7, endLocalTime != null ? Time.valueOf(endLocalTime) : null);
             stmt.setString(8, location.isEmpty() ? null : location);
             stmt.setInt(9, editingEvent.getEventId());
-            int rowsAffected = stmt.executeUpdate();
-
-            if (rowsAffected > 0) {
-                LOGGER.info("Updated event with ID: " + editingEvent.getEventId());
-                loadEvents();
-                clearForm();
-                showAlert("Success", "Event updated successfully!");
-            } else {
-                LOGGER.warning("No rows affected when updating event ID: " + editingEvent.getEventId());
-                showAlert("Error", "Event update failed: No rows affected.");
-            }
+            stmt.executeUpdate();
+            loadEvents();
+            clearForm();
+            showAlert("Success", "Event updated successfully!");
         } catch (SQLException e) {
-            LOGGER.severe("Failed to update event: " + e.getMessage() + ", SQL State: " + e.getSQLState());
+            LOGGER.severe("Failed to update event: " + e.getMessage());
             showAlert("Error", "Failed to update event: " + e.getMessage());
         }
     }
@@ -462,19 +451,13 @@ public class EventController {
                 try (Connection conn = DatabaseConnection.getConnection();
                      PreparedStatement stmt = conn.prepareStatement(sql)) {
                     stmt.setInt(1, eventId);
-                    int rowsAffected = stmt.executeUpdate();
-                    if (rowsAffected > 0) {
-                        LOGGER.info("Successfully updated event ID: " + eventId + " to CANCELED status");
-                        loadEvents();
-                        clearForm();
-                        showAlert("Success", "Event status changed to CANCELED!");
-                    } else {
-                        LOGGER.warning("No rows affected when updating event ID: " + eventId + " to CANCELED status");
-                        showAlert("Error", "Event cancellation failed: No rows affected. Check if event exists.");
-                    }
+                    stmt.executeUpdate();
+                    loadEvents();
+                    clearForm();
+                    showAlert("Success", "Event status changed to CANCELED!");
                 } catch (SQLException e) {
-                    LOGGER.severe("Failed to cancel event ID: " + eventId + " - SQL Error: " + e.getMessage() + ", SQL State: " + e.getSQLState());
-                    showAlert("Error", "Failed to cancel event: " + e.getMessage() + " (SQL State: " + e.getSQLState() + ")");
+                    LOGGER.severe("Failed to cancel event: " + e.getMessage());
+                    showAlert("Error", "Failed to cancel event: " + e.getMessage());
                 }
             }
         });
@@ -490,7 +473,7 @@ public class EventController {
                 return rs.getString("name");
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get association name for event " + eventId + ": " + e.getMessage());
+            LOGGER.severe("Failed to get association name: " + e.getMessage());
         }
         return null;
     }
@@ -505,7 +488,7 @@ public class EventController {
                 return rs.getInt("association_id");
             }
         } catch (SQLException e) {
-            LOGGER.severe("Failed to get association_id for " + assocName + ": " + e.getMessage());
+            LOGGER.severe("Failed to get association_id: " + e.getMessage());
         }
         return null;
     }
@@ -518,7 +501,7 @@ public class EventController {
             ResultSet rs = stmt.executeQuery();
             return rs.next();
         } catch (SQLException e) {
-            LOGGER.severe("Failed to validate user_id " + userId + ": " + e.getMessage());
+            LOGGER.severe("Failed to validate user_id: " + e.getMessage());
             return false;
         }
     }
@@ -539,17 +522,25 @@ public class EventController {
     }
 
     private boolean checkIfLeader() {
-        if (associationName == null) return false;
-        String sql = "SELECT leader_id FROM associations WHERE name = ? AND leader_id = (SELECT user_id FROM users WHERE email = ?)";
+        if (associationName == null) {
+            String sql = "SELECT 1 FROM associations WHERE leader_id = ?";
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, currentUserId);
+                return stmt.executeQuery().next();
+            } catch (SQLException e) {
+                LOGGER.severe("Failed to check leader status: " + e.getMessage());
+                return false;
+            }
+        }
+        String sql = "SELECT leader_id FROM associations WHERE name = ? AND leader_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, associationName);
-            stmt.setString(2, currentUserEmail);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next();
+            stmt.setInt(2, currentUserId);
+            return stmt.executeQuery().next();
         } catch (SQLException e) {
             LOGGER.severe("Failed to check leader status: " + e.getMessage());
-            showAlert("Error", "Failed to check leader status: " + e.getMessage());
             return false;
         }
     }

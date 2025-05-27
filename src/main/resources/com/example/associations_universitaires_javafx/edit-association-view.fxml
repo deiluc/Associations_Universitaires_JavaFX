@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.associations_universitaires_javafx.EditAssociationController"
+      spacing="15" style="-fx-padding: 20; -fx-background-color: #f5f5f5;">
+
+    <Label text="Edit Association Details" style="-fx-font-size: 18pt; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Name:" style="-fx-font-size: 14pt;"/>
+        <TextField fx:id="nameField" style="-fx-font-size: 14pt;" prefWidth="300"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Abbreviation:" style="-fx-font-size: 14pt;"/>
+        <TextField fx:id="abbreviationField" style="-fx-font-size: 14pt;" prefWidth="150"/>
+    </HBox>
+
+    <Label text="Departments" style="-fx-font-size: 14pt; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="newDepartmentField" promptText="Enter new department" style="-fx-font-size: 14pt;" prefWidth="200"/>
+        <Button fx:id="addDepartmentBtn" text="Add" onAction="#handleAddDepartment"
+                style="-fx-font-size: 14pt; -fx-padding: 8 20; -fx-background-color: #3498db; -fx-text-fill: white;"/>
+    </HBox>
+
+    <ListView fx:id="departmentsListView" style="-fx-font-size: 14pt;" prefHeight="150"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="editDepartmentField" promptText="Edit selected department" style="-fx-font-size: 14pt;" prefWidth="200"/>
+        <Button fx:id="editDepartmentBtn" text="Edit" onAction="#handleEditDepartment"
+                style="-fx-font-size: 14pt; -fx-padding: 8 20; -fx-background-color: #f1c40f; -fx-text-fill: white;"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button fx:id="removeDepartmentBtn" text="Remove Selected" onAction="#handleRemoveDepartment"
+                style="-fx-font-size: 14pt; -fx-padding: 8 20; -fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="saveBtn" text="Save" onAction="#handleSave"
+                style="-fx-font-size: 14pt; -fx-padding: 8 20; -fx-background-color: #2ecc71; -fx-text-fill: white;"/>
+        <Button fx:id="cancelBtn" text="Cancel" onAction="#handleCancel"
+                style="-fx-font-size: 14pt; -fx-padding: 8 20; -fx-background-color: #95a5a6; -fx-text-fill: white;"/>
+    </HBox>
+</VBox>
