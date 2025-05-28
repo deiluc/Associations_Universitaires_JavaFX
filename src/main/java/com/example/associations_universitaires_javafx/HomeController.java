@@ -499,7 +499,8 @@ public class HomeController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
+/*
+        !Uncoment for insert btn!
     @FXML
     private void addUser() {
         String email = "a";
@@ -524,7 +525,7 @@ public class HomeController {
         } catch (SQLException e) {
             showAlert("Error", "Failed to add user: " + e.getMessage());
         }
-    }
+    }*/
 
     // Inner class for Announcement
     public static class Announcement {

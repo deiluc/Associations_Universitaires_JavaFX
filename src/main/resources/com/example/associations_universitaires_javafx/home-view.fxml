@@ -46,7 +46,7 @@
                         <MenuItem fx:id="profAllocationItem" text="Professor Allocation" onAction="#handleProfAllocation"/>
                     </items>
                 </MenuButton>
-                <Button text="Add Test User" onAction="#addUser" style="-fx-font-size: 14pt; -fx-padding: 10 25;"/>
+                <!--Uncoment for insert btn <Button text="Add Test User" onAction="#addUser" style="-fx-font-size: 14pt; -fx-padding: 10 25;"/>-->
             </HBox>
         </VBox>
     </top>
