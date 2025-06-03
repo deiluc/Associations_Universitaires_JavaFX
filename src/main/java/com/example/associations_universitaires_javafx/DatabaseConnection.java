@@ -19,9 +19,9 @@ public class DatabaseConnection {
         useMockConnection = false;
         mockConnection = null;
     }
-    private static final String URL = "jdbc:mysql://localhost:3307/aujavafx";
-    private static final String USER = "root";
-    private static final String PASSWORD = "dei29lei";
+    private static final String URL = ""; //your URL for the local host
+    private static final String USER = ""; //your username for acces the local host DB(default: root || system)
+    private static final String PASSWORD = ""; //your local holst password to connect
     public static Connection getConnection() throws SQLException {
         if (useMockConnection) {
             throw new SQLException("Mock connection used for testing");
